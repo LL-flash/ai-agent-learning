@@ -1,33 +1,26 @@
-from llm.client import LLMClient
+from agent.planner import plan
 from agent.executor import Executor
 
 
-llm = LLMClient()
 executor = Executor()
 
 while True:
-
     task = input("\nUser: ")
 
     if task == "exit":
         break
 
-
     try:
-
-        plan = llm.chat(task)
+        plan_result = plan(task)
 
         print("\nPlan:")
-        print(plan)
+        print(plan_result)
 
-
-        result = executor.run(plan)
+        result = executor.run(plan_result)
 
         print("\nAgent:")
         print(result)
 
-
     except Exception as e:
-
         print("\nError:")
         print(e)

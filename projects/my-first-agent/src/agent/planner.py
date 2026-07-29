@@ -1,23 +1,24 @@
-class Planner:
+from tools.registry import TOOLS_SCHEMA
 
-    def __init__(self):
-        print("Planner initialized")
+def plan(task):
 
-
-    def plan(self, task):
-
-        if "weather" in task:
-
-            city = task.split()[-1]
-
-            return {
-                "action": "use_tool",
-                "tool": "weather",
-                "city": city
-            }
-
+    if "weather" in task:
+        city = task.split()[-1]
 
         return {
-            "action": "chat",
-            "input": task
+            "action": "use_tool",
+            "tool": "weather",
+            "city": city,
         }
+
+    if any(operator in task for operator in ["+", "-", "*", "/"]):
+        return {
+            "action": "use_tool",
+            "tool": "calculator",
+            "expression": task,
+        }
+
+    return {
+        "action": "chat",
+        "input": task,
+    }

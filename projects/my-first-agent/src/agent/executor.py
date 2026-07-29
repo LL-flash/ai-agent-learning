@@ -1,19 +1,22 @@
-from tools.registry import tools
+from tools.registry import TOOLS
 
 
 class Executor:
-
-
-    def __init__(self):
-        print("Executor initialized")
-
-
     def run(self, plan):
+        if plan["action"] == "chat":
+            return plan["input"]
 
-        if plan.get("tool"):
+        tool_name = plan["tool"]
 
-            tool = tools[plan["tool"]]
+        if tool_name not in TOOLS:
+            return f"Tool not found: {tool_name}"
 
-            return tool(plan["city"])
+        tool_func = TOOLS[tool_name]
 
-        return "No tool found"
+        if tool_name == "weather":
+            return tool_func(plan["city"])
+
+        if tool_name == "calculator":
+            return tool_func(plan["expression"])
+
+        return f"Unknown tool: {tool_name}"
