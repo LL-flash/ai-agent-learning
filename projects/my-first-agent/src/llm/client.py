@@ -25,45 +25,15 @@ class LLMClient:
         print("DeepSeek client initialized")
 
 
-    def chat(self, prompt):
+    def chat(self, messages):
 
         response = self.client.chat.completions.create(
-            model="deepseek-chat",
-
-            response_format={
-                "type": "json_object"
-            },
-
-            messages=[
-                {
-                    "role": "system",
-                    "content": """
-You are an AI agent planner.
-
-Your job is to decide which tool to use.
-
-Available tools:
-
-weather(city)
-
-Return JSON only.
-
-Example:
-
-{
-    "tool": "weather",
-    "city": "Tokyo"
-}
-"""
-                },
-
-                {
-                    "role": "user",
-                    "content": prompt
-                }
-            ]
-        )
-
+        model="deepseek-chat",
+        response_format={
+            "type": "json_object"
+        },
+        messages=messages
+    )
 
         content = response.choices[0].message.content
 
