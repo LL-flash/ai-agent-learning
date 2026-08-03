@@ -5,9 +5,12 @@ def format_tools_schema():
     lines = []
 
     for tool in TOOLS_SCHEMA:
-        name = tool["name"]
-        description = tool["description"]
-        parameters = ", ".join(tool["parameters"].keys())
+        function = tool["function"]
+        name = function["name"]
+        description = function["description"]
+        parameters = ", ".join(
+            function["parameters"]["properties"].keys()
+        )
 
         lines.append(f"- {name}: {description}. Parameters: {parameters}")
 
@@ -25,8 +28,8 @@ Available tools:
 
 Rules:
 1. Return JSON only, no other text.
-2. If the task needs weather, return {{"action": "use_tool", "tool": "weather", "city": "..."}}
-3. If the task needs math calculation, return {{"action": "use_tool", "tool": "calculator", "expression": "..."}}
+2. If the task needs weather, return {{"action": "use_tool", "tool": "weather", "parameters": {{"city": "..."}}}}
+3. If the task needs math calculation, return {{"action": "use_tool", "tool": "calculator", "parameters": {{"expression": "..."}}}}
 4. If no tool matches, return {{"action": "chat", "input": "..."}}
 """
 
@@ -54,14 +57,18 @@ def plan(task):
         return {
             "action": "use_tool",
             "tool": "weather",
-            "city": city,
+            "parameters": {
+                "city": city,
+            },
         }
 
     if any(operator in task for operator in ["+", "-", "*", "/"]):
         return {
             "action": "use_tool",
             "tool": "calculator",
-            "expression": task,
+            "parameters": {
+                "expression": task,
+            },
         }
 
     return {

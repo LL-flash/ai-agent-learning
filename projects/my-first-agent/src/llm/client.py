@@ -28,13 +28,27 @@ class LLMClient:
     def chat(self, messages):
 
         response = self.client.chat.completions.create(
-        model="deepseek-chat",
-        response_format={
-            "type": "json_object"
-        },
-        messages=messages
-    )
+            model="deepseek-chat",
+            response_format={
+                "type": "json_object"
+            },
+            messages=messages
+        )
 
         content = response.choices[0].message.content
 
         return json.loads(content)
+
+
+    def create_message(self, messages, tools=None):
+        request = {
+            "model": "deepseek-chat",
+            "messages": messages,
+        }
+
+        if tools is not None:
+            request["tools"] = tools
+
+        response = self.client.chat.completions.create(**request)
+
+        return response.choices[0].message
