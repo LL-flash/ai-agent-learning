@@ -45,6 +45,9 @@ class Executor:
         except json.JSONDecodeError as error:
             return f"Error: failed to parse tool arguments: {error}"
 
+        if not isinstance(arguments, dict):
+            return "Error: tool arguments must be a JSON object"
+
         plan = {
             "action": "use_tool",
             "tool": tool_name,
