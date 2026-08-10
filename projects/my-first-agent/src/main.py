@@ -4,9 +4,12 @@ from tools.registry import TOOLS_SCHEMA
 
 
 MAX_TOOL_ROUNDS = 5
+MAX_MESSAGES = 10
 
 executor = Executor()
 llm = LLMClient()
+
+messages = []
 
 while True:
     task = input("\nUser: ")
@@ -14,11 +17,14 @@ while True:
     if task == "exit":
         break
 
-    try:
-        messages = [
-            {"role": "user", "content": task},
-        ]
+    messages.append(
+        {
+            "role": "user",
+            "content": task,
+        }
+    )
 
+    try:
         assistant_message = llm.create_message(
             messages,
             tools=TOOLS_SCHEMA,
@@ -65,8 +71,17 @@ while True:
             print("\nAgent:")
             print(assistant_message.content)
 
-            continue
+            messages.append(
+                {
+                    "role": "assistant",
+                    "content": assistant_message.content,
+                }
+            )
 
+            if len(messages) > MAX_MESSAGES:
+                messages = messages[-MAX_MESSAGES:]
+
+            continue
 
     except Exception as e:
         print("\nError:")
