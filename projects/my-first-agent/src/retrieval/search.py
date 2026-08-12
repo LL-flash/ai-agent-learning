@@ -1,7 +1,20 @@
 import math
 import string
 
-VOCABULARY = ["memory", "messages", "tool", "text", "git", "branch", "merge"]
+VOCABULARY = [
+    "memory",
+    "messages",
+    "tool",
+    "text",
+    "git",
+    "branch",
+    "merge",
+    "rag",
+    "similarity",
+    "search",
+    "knowledge_search",
+    "wrapper",
+]
 
 
 def vectorize(text):

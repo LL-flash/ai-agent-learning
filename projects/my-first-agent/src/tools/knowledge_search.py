@@ -3,6 +3,8 @@ from retrieval.search import search_documents
 
 DOCUMENTS = [
     "Day16 taught short-term memory with messages.",
+    "Day17 taught RAG and similarity search.",
+    "Day18 added knowledge_search as a wrapper tool.",
     "Day15 added a text_length tool.",
     "Day08 introduced Git branch and merge.",
 ]
