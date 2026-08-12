@@ -1,10 +1,14 @@
 import math
+import string
 
 VOCABULARY = ["memory", "messages", "tool", "text", "git", "branch", "merge"]
 
 
 def vectorize(text):
-    words = text.lower().split()
+    words = [
+        word.strip(string.punctuation)
+        for word in text.lower().split()
+    ]
 
     return [
         1 if word in words else 0
