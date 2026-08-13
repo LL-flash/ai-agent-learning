@@ -14,6 +14,9 @@ VOCABULARY = [
     "search",
     "knowledge_search",
     "wrapper",
+    "day16",
+    "day17",
+    "day18",
 ]
 
 
