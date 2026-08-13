@@ -9,6 +9,7 @@ RETRY_QUERIES = {
     "Day17": "Day17 RAG similarity search",
     "Day18": "Day18 knowledge_search wrapper",
 }
+MAX_RETRIES = 2
 
 
 def create_plan(task: str) -> list[str]:
@@ -48,10 +49,22 @@ def run_plan(plan: list[str]) -> list[str]:
 
     for step in plan:
         result = knowledge_search(step)
+        retry_count = 0
+
+        while result == "No relevant knowledge found." and retry_count < MAX_RETRIES:
+            retry_query = refine_query(step)
+
+            if retry_query == step:
+                break
+
+            result = knowledge_search(retry_query)
+            retry_count += 1
 
         if result == "No relevant knowledge found.":
-            retry_query = refine_query(step)
-            result = knowledge_search(retry_query)
+            result = (
+                f"Error: could not find relevant knowledge after "
+                f"{retry_count} retries for '{step}'."
+            )
 
         observations.append(result)
 
