@@ -58,8 +58,27 @@ def run_plan(plan: list[str]) -> list[str]:
     return observations
 
 
-def summarize_observations(observations: list[str]) -> str:
-    return "\n".join(observations)
+def create_summary(task: str, observations: list[str]) -> str:
+    context = "\n".join(observations)
+
+    messages = [
+        {
+            "role": "system",
+            "content": (
+                "Answer the user's task using only the provided knowledge. "
+                "If the knowledge is insufficient, say so clearly."
+            ),
+        },
+        {
+            "role": "user",
+            "content": f"Task: {task}\n\nKnowledge:\n{context}",
+        },
+    ]
+
+    llm = LLMClient()
+    response = llm.create_message(messages)
+
+    return response.content
 
 
 if __name__ == "__main__":
@@ -68,5 +87,5 @@ if __name__ == "__main__":
     print("Generated plan:")
     print(plan)
     observations = run_plan(plan)
-    summary = summarize_observations(observations)
+    summary = create_summary(task, observations)
     print(summary)
