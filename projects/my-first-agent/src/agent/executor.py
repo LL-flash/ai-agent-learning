@@ -22,7 +22,7 @@ class Executor:
             return "Error: missing tool"
 
         if tool_name not in TOOLS:
-            return f"Tool not found: {tool_name}"
+            return f"Error: tool not found: {tool_name}"
 
         parameters = plan.get("parameters", {})
 

@@ -44,12 +44,20 @@ while True:
                 assistant_message.model_dump(exclude_none=True)
             )
 
+            tool_failed = False
+
             for tool_call in assistant_message.tool_calls:
                 print("\nTool call:")
                 print(tool_call.function.name)
                 print(tool_call.function.arguments)
 
                 result = executor.run_tool_call(tool_call)
+
+                if result.startswith("Error:"):
+                    tool_failed = True
+                    print("\nError:")
+                    print(result)
+                    break
 
                 messages.append(
                     {
@@ -61,6 +69,9 @@ while True:
 
                 print("\nTool result:")
                 print(result)
+
+            if tool_failed:
+                break
 
             assistant_message = llm.create_message(
                 messages,
