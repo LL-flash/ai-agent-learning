@@ -11,6 +11,16 @@ llm = LLMClient()
 
 messages = []
 
+
+def trim_messages(messages: list[dict], max_messages: int) -> list[dict]:
+    recent_messages = messages[-max_messages:]
+
+    while recent_messages and recent_messages[0].get("role") != "user":
+        recent_messages.pop(0)
+
+    return recent_messages
+
+
 while True:
     task = input("\nUser: ")
 
@@ -40,11 +50,12 @@ while True:
                 print("Too many tool rounds")
                 break
 
-            messages.append(
+            pending_messages = [
                 assistant_message.model_dump(exclude_none=True)
-            )
+            ]
 
             tool_failed = False
+            error_result = ""
 
             for tool_call in assistant_message.tool_calls:
                 print("\nTool call:")
@@ -55,11 +66,10 @@ while True:
 
                 if result.startswith("Error:"):
                     tool_failed = True
-                    print("\nError:")
-                    print(result)
+                    error_result = result
                     break
 
-                messages.append(
+                pending_messages.append(
                     {
                         "role": "tool",
                         "tool_call_id": tool_call.id,
@@ -71,7 +81,18 @@ while True:
                 print(result)
 
             if tool_failed:
+                messages.append(
+                    {
+                        "role": "assistant",
+                        "content": f"Tool execution failed: {error_result}",
+                    }
+                )
+                print("\nError:")
+                print(error_result)
+                messages = trim_messages(messages, MAX_MESSAGES)
                 break
+
+            messages.extend(pending_messages)
 
             assistant_message = llm.create_message(
                 messages,
@@ -89,8 +110,7 @@ while True:
                 }
             )
 
-            if len(messages) > MAX_MESSAGES:
-                messages = messages[-MAX_MESSAGES:]
+            messages = trim_messages(messages, MAX_MESSAGES)
 
             continue
 
